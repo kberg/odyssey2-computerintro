@@ -9,23 +9,23 @@ public class Computer implements IComputer {
 
 	private static final OpCodes opcodes = new OpCodes();
 
-	private static final int DATA_SPACE_SIZE = 100;
+	private static final int MEMORY_SIZE = 256;
 	// The accumulator is stored as the 17th register.
 	private final byte[] registers = new byte[17];
-	private final byte[] program = new byte[DATA_SPACE_SIZE];
-	private int programStep;
-	private final Stack<Integer> callStack;
-	private boolean continueRunning;
+	private final byte[] memory = new byte[MEMORY_SIZE];
+	private byte programCounter;
+	private final Stack<Byte> callStack;
+	private volatile boolean continueRunning;
 
 	public Computer() {
-		callStack = new Stack<Integer>();
+		callStack = new Stack<Byte>();
 		clear();
 	}
 	
 	private void clear() {
 		reset();
-		for (int i = 0; i < program.length; i++) {
-			program[i] = 0;
+		for (int i = 0; i < memory.length; i++) {
+			memory[i] = 0;
 		}
 	}
 
@@ -34,7 +34,7 @@ public class Computer implements IComputer {
 		for (int i = 0; i < registers.length; i++) {
 			registers[i] = 0;
 		}
-		setProgramCounter(0);
+		setProgramCounter((byte) 0);
 		continueRunning = true;
 	}
 
@@ -54,24 +54,23 @@ public class Computer implements IComputer {
 		registers[i] = value;
 	}
 
-	public byte getAtProgramStep(int programStep) {
-		return program[programStep];
+	public byte getMemory(byte offset) {
+		return memory[offset];
 	}
 
 
-	public void setProgramCounter(int programStep) {
-		this.programStep = programStep;
+	public void setProgramCounter(byte programCounter) {
+		this.programCounter = programCounter;
 	}
 
-	public int getProgramStep() {
-		return programStep;
+	public byte getProgramCounter() {
+		return programCounter;
 	}
 
-	public byte advanceProgramStep() {
-		int programStep = getProgramStep();
-		byte datum = getAtProgramStep(programStep);
-		// TODO: programStep + 1 should be a method that includes a wraparound, for instance.
-		setProgramCounter(programStep + 1);
+	public byte advanceProgramCounter() {
+		byte programCounter = getProgramCounter();
+		byte datum = getMemory(programCounter);
+		setProgramCounter((byte) (programCounter + 1));
 		return datum;
 	}
 
@@ -80,7 +79,7 @@ public class Computer implements IComputer {
 	}
 
 	public void saveProgramCounter() {
-		callStack.add(programStep);
+		callStack.add(programCounter);
 	}
 
 	public byte restoreProgramCounter() {
@@ -91,15 +90,23 @@ public class Computer implements IComputer {
 	public void run(IContext context) {
 		reset();
 		while(continueRunning) {
-			byte opcode = advanceProgramStep();
+			byte opcode = advanceProgramCounter();
 			IOperation operation = opcodes.get(opcode);
 			operation.execute(this, context);
+			postOp();
 		}
 	}
 
-	public void setProgram(byte[] bytes) {
+	/**
+	 * Hack, work-around for debuggers to step in.
+	 */
+	protected void postOp() {
+		// No-op
+  }
+
+	public void setProgram(byte... bytes) {
 		for (int i = 0; i < bytes.length; i++) {
-			program[i] = bytes[i];
+			memory[i] = bytes[i];
 		}
 	}
 }

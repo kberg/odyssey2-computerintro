@@ -54,8 +54,8 @@ public class OpCodes {
 		add((byte) 0x08, RND_OPERATION);
 		add((byte) 0x09, new IOperation() {
 			public void execute(IComputer computer, IContext context) {
-				byte register = computer.getRegister(IComputer.REGISTER_C);
-				byte datum = computer.getAtProgramStep(register);
+				byte register = computer.getRegister(IComputer.REGISTER_B);
+				byte datum = computer.getMemory(register);
 				computer.setAccumulator(datum);
 			}
 		});

@@ -44,7 +44,7 @@ class Operations {
 
 	public static final IOperation BRACH_OPERATION = new IOperation() {
 		public void execute(IComputer computer, IContext context) {
-			byte datum = computer.advanceProgramStep();
+			byte datum = computer.advanceProgramCounter();
 			computer.setProgramCounter(datum);
 		}
 	};
@@ -52,7 +52,7 @@ class Operations {
 	public static final IOperation BRACH_ACCUM_ZERO_OPERATION = new IOperation() {
 		public void execute(IComputer computer, IContext context) {
 			if (computer.getAccumulator() == 0) {
-				byte datum = computer.advanceProgramStep();
+				byte datum = computer.advanceProgramCounter();
 				computer.setProgramCounter(datum);
 			}
 			throw new IncompleteOperationException("BRACH_ACCUM_ZERO");
@@ -186,7 +186,7 @@ class Operations {
 	public static IOperation assignValueToRegisterOperation(final int i) {
 		return new IOperation() {
 			public void execute(IComputer computer, IContext context) {
-				computer.setRegister(i, computer.advanceProgramStep());
+				computer.setRegister(i, computer.advanceProgramCounter());
 			}
 		};
 	}
