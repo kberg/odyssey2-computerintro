@@ -43,7 +43,8 @@ public class BitmapWidget extends Canvas {
 		return bitmap;
 	}
 
-	public Point computeSize(int wHint, int hHint, boolean changed) {
+	@Override
+  public Point computeSize(int wHint, int hHint, boolean changed) {
 		// I wonder if, when we add a border, if this changes. Could be!
 		return new Point(2 + (width * MULTIPLIER), 2 + (height * MULTIPLIER));
 	}

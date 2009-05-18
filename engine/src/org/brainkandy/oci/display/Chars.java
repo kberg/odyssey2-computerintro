@@ -1,5 +1,7 @@
 package org.brainkandy.oci.display;
 
+import org.brainkandy.oci.context.IBitmap;
+
 public class Chars {
 	public static final Char[] chars = new Char[] {
 		new Char("7cc6c6c6c6c67c"), // 0
@@ -66,6 +68,16 @@ public class Chars {
 		new Char("000363ffff1808"), // airplane
 		new Char("0000001038fe7c"), // ship
 	};
+
+	public static Char getChar(char c) {
+		for (int i = 0; i < Chars.asciiMap.length; i++) {
+			if (c == Chars.asciiMap[i]) {
+				return Chars.chars[i];
+			}
+		}
+		return null;
+	}
+
 	public static final char[] asciiMap = 
 		  "0123456789:$ ?LP+WERTUIOQSDFGHJKAZXCVBM.-`~=YN/*_,[{}]>^'\"|\\#()".toCharArray();
 }

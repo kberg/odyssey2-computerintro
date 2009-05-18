@@ -21,12 +21,6 @@ public class SwtDisplayDressing {
 	private Menu testMenu;
 	private Menu runMenu;
 
-	private MenuItem fileOpenItem;
-	private MenuItem testAllItem;
-	private MenuItem testClearItem;
-	private MenuItem testEchoItem;
-	private MenuItem runRunMenuItem;
-
 	private boolean echo = false;
 
 	public SwtDisplayDressing(Shell shell, SwtDisplay swtDisplay) {
@@ -57,14 +51,31 @@ public class SwtDisplayDressing {
 		testMenu = createMenu(shell, menuBar, "&Test");
 		runMenu = createMenu(shell, menuBar, "&Run");
 	
-		fileOpenItem = createMenuItem(fileMenu, "&Open...", new FileOpenItemListener());
-		testAllItem = createMenuItem(testMenu, "&Show All", new TestAllItemListener());
-		testClearItem = createMenuItem(testMenu, "&Clear", new TestClearListener());
-		testEchoItem = createMenuItem(testMenu, "Toggle &Echo", new TestEchoListener());
-		runRunMenuItem = createMenuItem(runMenu, "&Run", null);
+		createMenuItem(fileMenu, "&Open...", new SelectionAdapter() {
+		});
+		createMenuItem(testMenu, "&Show All", new SelectionAdapter() {
+			@Override
+      public void widgetSelected(SelectionEvent event) {
+				showAllPattern();
+			}
+		});
+		createMenuItem(testMenu, "&Clear", new SelectionAdapter() {
+			@Override
+      public void widgetSelected(SelectionEvent event) {
+				clear();
+			}
+		});
+		createMenuItem(testMenu, "Toggle &Echo", new SelectionAdapter() {
+			@Override
+      public void widgetSelected(SelectionEvent event) {
+				echo = !echo;
+			}
+		});
+		createMenuItem(runMenu, "&Run", null);
 
 		shell.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
+			@Override
+      public void keyReleased(KeyEvent e) {
 				System.out.println(e);
 				if (echo) {
 					char c = Character.toUpperCase(e.character);
@@ -79,34 +90,19 @@ public class SwtDisplayDressing {
 		shell.setMenuBar(menuBar);
 	}
 
-	class TestAllItemListener extends SelectionAdapter {
-		public void widgetSelected(SelectionEvent event) {
-			swtDisplay.setPosition(0, 0);
-			int j = 0;
-			for (int i = 0; i < 1000; i++) {
-				swtDisplay.print(Chars.chars[j]);
-				j = (j + 1) % Chars.chars.length;
-			}
+	private void showAllPattern() {
+		swtDisplay.setPosition(0, 0);
+		int j = 0;
+		for (int i = 0; i < 1000; i++) {
+			swtDisplay.print(Chars.chars[j]);
+			j = (j + 1) % Chars.chars.length;
 		}
 	}
 
-	class TestClearListener extends SelectionAdapter {
-		public void widgetSelected(SelectionEvent event) {
-			swtDisplay.setPosition(0, 0);
-			for (int i = 0; i < 1000; i++) {
-				swtDisplay.print(null);
-			}
-		}
-	}
-
-	class TestEchoListener extends SelectionAdapter {
-		public void widgetSelected(SelectionEvent event) {
-			echo = !echo;
-		}
-	}
-
-	class FileOpenItemListener extends SelectionAdapter {
-		public void widgetSelected(SelectionEvent event) {
+	private void clear() {
+		swtDisplay.setPosition(0, 0);
+		for (int i = 0; i < 1000; i++) {
+			swtDisplay.print(null);
 		}
 	}
 }
