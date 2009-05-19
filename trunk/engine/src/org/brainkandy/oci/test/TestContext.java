@@ -6,29 +6,34 @@ import org.brainkandy.oci.engine.IBuzzer;
 import org.brainkandy.oci.engine.IContext;
 import org.brainkandy.oci.engine.IInput;
 import org.brainkandy.oci.engine.IOutput;
+import org.brainkandy.oci.math.UnsignedByte;
 
 public class TestContext implements IContext {
 	private final byte[] inputData;
 	private int readPosition;
-	private final byte[] outputData = new byte[13];
-	private byte writePosition;
+	private final UnsignedByte[] outputData = new UnsignedByte[13];
+	private UnsignedByte writePosition;
 
 	private final IInput input = new IInput() {
-		public byte read() {
+		public UnsignedByte read() {
 			if (readPosition >= inputData.length) {
-				return 0;
+				return UnsignedByte.ZERO;
 			} else {
-				return inputData[readPosition++];
+				int datum = inputData[readPosition++];
+				if (datum < 0) {
+					datum = 256 - datum;
+				}
+				return UnsignedByte.get(datum);
 			}
 		}
 	};
 
 	private final IOutput output = new IOutput() {
-		public void put(byte datum) {
-			outputData[writePosition] = datum;
+		public void put(UnsignedByte datum) {
+			outputData[writePosition.toInteger()] = datum;
 		}
 
-		public void setPosition(byte writePosition) {
+		public void setPosition(UnsignedByte writePosition) {
 			TestContext.this.writePosition = writePosition;
 		}
 	};
@@ -43,7 +48,7 @@ public class TestContext implements IContext {
 		this.inputData = new byte[inputData.length];
 		System.arraycopy(inputData, 0, this.inputData, 0, inputData.length);
 		readPosition = 0;
-		writePosition = 0;
+		writePosition = UnsignedByte.ZERO;
 	}
 
 	public IInput getInput() {

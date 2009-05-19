@@ -1,6 +1,8 @@
 package org.brainkandy.oci.engine;
 
+import org.brainkandy.oci.math.UnsignedByte;
+
 public interface IOutput {
-	void put(byte datum);
-	void setPosition(byte position);
+	void put(UnsignedByte datum);
+	void setPosition(UnsignedByte position);
 }

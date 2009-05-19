@@ -4,6 +4,7 @@ import java.util.Stack;
 
 import org.brainkandy.oci.engine.IComputer;
 import org.brainkandy.oci.engine.IContext;
+import org.brainkandy.oci.math.UnsignedByte;
 
 public class Computer implements IComputer {
 
@@ -11,66 +12,66 @@ public class Computer implements IComputer {
 
 	private static final int MEMORY_SIZE = 256;
 	// The accumulator is stored as the 17th register.
-	private final byte[] registers = new byte[17];
-	private final byte[] memory = new byte[MEMORY_SIZE];
-	private byte programCounter;
-	private final Stack<Byte> callStack;
+	private final UnsignedByte[] registers = new UnsignedByte[17];
+	private final UnsignedByte[] memory = new UnsignedByte[MEMORY_SIZE];
+	private UnsignedByte programCounter;
+	private final Stack<UnsignedByte> callStack;
 	private volatile boolean continueRunning;
 
 	public Computer() {
-		callStack = new Stack<Byte>();
+		callStack = new Stack<UnsignedByte>();
 		clear();
 	}
 	
 	private void clear() {
 		reset();
 		for (int i = 0; i < memory.length; i++) {
-			memory[i] = 0;
+			memory[i] = UnsignedByte.ZERO;
 		}
 	}
 
 	public void reset() {
 		callStack.clear();
 		for (int i = 0; i < registers.length; i++) {
-			registers[i] = 0;
+			registers[i] = UnsignedByte.ZERO;
 		}
-		setProgramCounter((byte) 0);
+		setProgramCounter(UnsignedByte.ZERO);
 		continueRunning = true;
 	}
 
-	public byte getAccumulator() {
+	public UnsignedByte getAccumulator() {
 		return getRegister(16);
 	}
 
-	public byte getRegister(int i) {
+	public UnsignedByte getRegister(int i) {
 		return registers[i];
 	}
 
-	public void setAccumulator(byte datum) {
+	public void setAccumulator(UnsignedByte datum) {
 		setRegister(16, datum);
 	}
 
-	public void setRegister(int i, byte value) {
+	public void setRegister(int i, UnsignedByte value) {
 		registers[i] = value;
 	}
 
-	public byte getMemory(byte offset) {
-		return memory[offset];
+	public UnsignedByte getMemory(UnsignedByte offset) {
+		return memory[offset.toByte()];
 	}
 
 
-	public void setProgramCounter(byte programCounter) {
+	public void setProgramCounter(UnsignedByte programCounter) {
 		this.programCounter = programCounter;
 	}
 
-	public byte getProgramCounter() {
+	public UnsignedByte getProgramCounter() {
 		return programCounter;
 	}
 
-	public byte advanceProgramCounter() {
-		byte programCounter = getProgramCounter();
-		byte datum = getMemory(programCounter);
-		setProgramCounter((byte) (programCounter + 1));
+	public UnsignedByte advanceProgramCounter() {
+		UnsignedByte programCounter = getProgramCounter();
+		UnsignedByte datum = getMemory(programCounter);
+		setProgramCounter(programCounter.increment());
 		return datum;
 	}
 
@@ -82,15 +83,14 @@ public class Computer implements IComputer {
 		callStack.add(programCounter);
 	}
 
-	public byte restoreProgramCounter() {
-		// TODO Auto-generated method stub
-		return -1;
+	public UnsignedByte restoreProgramCounter() {
+		throw new RuntimeException("restoreProgramCounter not written");
 	}
 
 	public void run(IContext context) {
 		reset();
 		while(continueRunning) {
-			byte opcode = advanceProgramCounter();
+			UnsignedByte opcode = advanceProgramCounter();
 			IOperation operation = opcodes.get(opcode);
 			operation.execute(this, context);
 			postOp();
@@ -104,9 +104,9 @@ public class Computer implements IComputer {
 		// No-op
   }
 
-	public void setProgram(byte... bytes) {
-		for (int i = 0; i < bytes.length; i++) {
-			memory[i] = bytes[i];
+	public void setProgram(UnsignedByte... unsignedBytes) {
+		for (int i = 0; i < unsignedBytes.length; i++) {
+			memory[i] = unsignedBytes[i];
 		}
 	}
 }

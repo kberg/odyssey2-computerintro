@@ -36,11 +36,12 @@ public class SwtDisplayDressing {
 		return menu;
 	}
 
-	private MenuItem createMenuItem(Menu menu, String text, SelectionListener listener) {
+	private MenuItem createMenuItem(Menu menu, String text,
+			SelectionListener listener) {
 		MenuItem item = new MenuItem(menu, SWT.CASCADE);
 		item.setText(text);
 		if (listener != null) {
-		  item.addSelectionListener(listener);
+			item.addSelectionListener(listener);
 		}
 		return item;
 	}
@@ -50,24 +51,24 @@ public class SwtDisplayDressing {
 		fileMenu = createMenu(shell, menuBar, "&File");
 		testMenu = createMenu(shell, menuBar, "&Test");
 		runMenu = createMenu(shell, menuBar, "&Run");
-	
+
 		createMenuItem(fileMenu, "&Open...", new SelectionAdapter() {
 		});
 		createMenuItem(testMenu, "&Show All", new SelectionAdapter() {
 			@Override
-      public void widgetSelected(SelectionEvent event) {
+			public void widgetSelected(SelectionEvent event) {
 				showAllPattern();
 			}
 		});
 		createMenuItem(testMenu, "&Clear", new SelectionAdapter() {
 			@Override
-      public void widgetSelected(SelectionEvent event) {
+			public void widgetSelected(SelectionEvent event) {
 				clear();
 			}
 		});
 		createMenuItem(testMenu, "Toggle &Echo", new SelectionAdapter() {
 			@Override
-      public void widgetSelected(SelectionEvent event) {
+			public void widgetSelected(SelectionEvent event) {
 				echo = !echo;
 			}
 		});
@@ -75,7 +76,7 @@ public class SwtDisplayDressing {
 
 		shell.addKeyListener(new KeyAdapter() {
 			@Override
-      public void keyReleased(KeyEvent e) {
+			public void keyReleased(KeyEvent e) {
 				System.out.println(e);
 				if (echo) {
 					char c = Character.toUpperCase(e.character);
@@ -85,7 +86,7 @@ public class SwtDisplayDressing {
 						}
 					}
 				}
-      }
+			}
 		});
 		shell.setMenuBar(menuBar);
 	}

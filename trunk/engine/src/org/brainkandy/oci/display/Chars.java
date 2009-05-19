@@ -1,7 +1,5 @@
 package org.brainkandy.oci.display;
 
-import org.brainkandy.oci.context.IBitmap;
-
 public class Chars {
 	public static final Char[] chars = new Char[] {
 		new Char("7cc6c6c6c6c67c"), // 0

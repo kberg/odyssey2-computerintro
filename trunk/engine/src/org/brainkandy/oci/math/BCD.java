@@ -18,10 +18,11 @@ public class BCD {
 	 * byte represents the high base-10 digit, and the second byte represents
 	 * the low base-10 digit.
 	 */
-	public static byte[] split(int number) {
-		validate(number);
-		return new byte[] { 
-			(byte) (number / 10), (byte) (number % 10)
+	public static UnsignedByte[] split(UnsignedByte number) {
+		int intValue = number.toInteger();
+		validate(intValue);
+		return new UnsignedByte[] { 
+			UnsignedByte.get(intValue / 10), UnsignedByte.get(intValue % 10)
 		};
 	}
 }

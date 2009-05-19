@@ -3,6 +3,7 @@ package org.brainkandy.oci.swt.test;
 import org.brainkandy.oci.display.Chars;
 import org.brainkandy.oci.engine.IContext;
 import org.brainkandy.oci.engine.impl.Computer;
+import org.brainkandy.oci.math.UnsignedByte;
 import org.brainkandy.oci.swt.SwtDisplay;
 import org.eclipse.swt.widgets.Shell;
 
@@ -96,38 +97,34 @@ public class Debugger extends Computer {
 	// }
 
 	@Override
-	public void setAccumulator(byte datum) {
+	public void setAccumulator(UnsignedByte datum) {
 		super.setAccumulator(datum);
-		printString(8, 3, toString(datum));
+		printString(8, 3, datum.toHexString());
 	}
 
 	// @Override
-	// public void setProgram(byte... bytes) {
+	// public void setProgram(UnsignedByte... bytes) {
 	// // TODO Auto-generated method stub
-	// super.setProgram(bytes);
+	// super.setProgram(UnsignedBytes);
 	// }
 
 	@Override
-	public void setProgramCounter(byte programCounter) {
+	public void setProgramCounter(UnsignedByte programCounter) {
 		super.setProgramCounter(programCounter);
-		printString(8, 2, toString(programCounter));
+		printString(8, 2, programCounter.toHexString());
 	}
 
 	@Override
-	public void setRegister(int i, byte value) {
+	public void setRegister(int i, UnsignedByte value) {
 		super.setRegister(i, value);
 		int column = i <= 7 ? 28 : 34;
 		int row = i % 8;
-		printString(column, row, toString(value));
+		printString(column, row, value.toHexString());
 	}
 
 	@Override
 	protected void postOp() {
 		@SuppressWarnings("unused")
     int x = 1 + 1;
-	}
-
-	private String toString(byte b) {
-		return (b < 16 ? "0" : "") + Integer.toString((int) b, 16);
 	}
 }
