@@ -25,6 +25,7 @@ import static org.brainkandy.oci.engine.impl.Operations.unpackOperation;
 
 import org.brainkandy.oci.engine.IComputer;
 import org.brainkandy.oci.engine.IContext;
+import org.brainkandy.oci.math.UnsignedByte;
 
 public class OpCodes {
 	private final IOperation[] operations = new IOperation[256];
@@ -43,19 +44,19 @@ public class OpCodes {
 		add((byte) 0x01, CLEAR_ACCUM_OPERATION);
 		add((byte) 0x02, new IOperation() {
 			public void execute(IComputer computer, IContext context) {
-				computer.setAccumulator((byte) (computer.getAccumulator() - 1));
+				computer.setAccumulator(computer.getAccumulator().decrement());
 			}
 		});
 		add((byte) 0x03, new IOperation() {
 			public void execute(IComputer computer, IContext context) {
-				computer.setAccumulator((byte) (computer.getAccumulator() + 1));
+				computer.setAccumulator(computer.getAccumulator().increment());
 			}
 		});
 		add((byte) 0x08, RND_OPERATION);
 		add((byte) 0x09, new IOperation() {
 			public void execute(IComputer computer, IContext context) {
-				byte register = computer.getRegister(IComputer.REGISTER_B);
-				byte datum = computer.getMemory(register);
+				UnsignedByte register = computer.getRegister(IComputer.REGISTER_B);
+				UnsignedByte datum = computer.getMemory(register);
 				computer.setAccumulator(datum);
 			}
 		});
@@ -94,7 +95,7 @@ public class OpCodes {
 		operations[i + 128] = operation;
 	}
 
-	public IOperation get(byte opcode) {
-		return operations[opcode + 128];
+	public IOperation get(UnsignedByte opcode) {
+		return operations[opcode.toByte() + 128];
 	}
 }

@@ -1,5 +1,7 @@
 package org.brainkandy.oci.engine;
 
+import org.brainkandy.oci.math.UnsignedByte;
+
 /**
  * Abstraction for a computer instance.
  *
@@ -15,40 +17,40 @@ public interface IComputer {
 	 * @param i register number, between 0 and 15.
 	 * @param datum the byte value to assign to the register.
 	 */
-	void setRegister(int i, byte datum);
+	void setRegister(int i, UnsignedByte datum);
 
 	/**
 	 * Get the byte value from a register
 	 * @param i register number, between 0 and 15.
 	 * @return the byte value from the register.
 	 */
-	byte getRegister(int i);
+	UnsignedByte getRegister(int i);
 
 	/**
 	 * Assign a byte value to the accumulator
 	 * @param datum the byte value to assign to the accumulator.
 	 */
-	void setAccumulator(byte datum);
+	void setAccumulator(UnsignedByte datum);
 
 	/**
 	 * Get the byte value from the accumulator
 	 * @return the byte value from the accumualator.
 	 */
-	byte getAccumulator();
+	UnsignedByte getAccumulator();
 
 	/**
 	 * 
 	 * @param programCounter
 	 */
-	void setProgramCounter(byte programCounter);
-	byte getProgramCounter();
+	void setProgramCounter(UnsignedByte programCounter);
+	UnsignedByte getProgramCounter();
 
 	/**
 	 * Return the data value at a certain 
 	 * @param programCounter
 	 * @return
 	 */
-	byte getMemory(byte offset);
+	UnsignedByte getMemory(UnsignedByte offset);
 
 	/**
 	 * Stop the computer at the completion of the next instruction.
@@ -60,10 +62,10 @@ public interface IComputer {
 	 *
 	 * @return the data element of the program counter before it is incremented.
 	 */
-	byte advanceProgramCounter();
+	UnsignedByte advanceProgramCounter();
 	void saveProgramCounter();
-	byte restoreProgramCounter();
+	UnsignedByte restoreProgramCounter();
 	void reset();
 	void run(IContext context);
-	void setProgram(byte... bytes);
+	void setProgram(UnsignedByte... bytes);
 }

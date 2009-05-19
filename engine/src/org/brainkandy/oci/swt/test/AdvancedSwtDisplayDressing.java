@@ -8,6 +8,8 @@ import org.brainkandy.oci.engine.IComputer;
 import org.brainkandy.oci.engine.IContext;
 import org.brainkandy.oci.engine.IInput;
 import org.brainkandy.oci.engine.IOutput;
+import org.brainkandy.oci.math.UnsignedByte;
+import org.brainkandy.oci.samples.CreepyCrawler;
 import org.brainkandy.oci.samples.CreepyCrawler2;
 import org.brainkandy.oci.swt.SwtDisplay;
 import org.eclipse.swt.SWT;
@@ -46,7 +48,7 @@ public class AdvancedSwtDisplayDressing {
 	}
 
 	private MenuItem createMenuItem(Menu menu, String text,
-	    SelectionListener listener) {
+			SelectionListener listener) {
 		MenuItem item = new MenuItem(menu, SWT.CASCADE);
 		item.setText(text);
 		if (listener != null) {
@@ -108,7 +110,7 @@ public class AdvancedSwtDisplayDressing {
 				if (echo) {
 					char c = Character.toUpperCase(e.character);
 					Char ch = Chars.getChar(c);
-				  swtDisplay.print(ch);
+					swtDisplay.print(ch);
 				}
 			}
 		});
@@ -131,50 +133,51 @@ public class AdvancedSwtDisplayDressing {
 		}
 	}
 
-	private IContext createContext(final Shell shell, final SwtDisplay swtDisplay) {
+	private IContext createContext(final Shell shell,
+			final SwtDisplay swtDisplay) {
 		return new IContext() {
 
 			private final IBuzzer buzzer = new IBuzzer() {
 				public void buzz() {
-					shell.getDisplay().asyncExec(new Runnable() {
+					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							shell.getDisplay().beep();
 							try {
-			          Thread.sleep(100);
-		          } catch (InterruptedException e) {
-		          	Thread.currentThread().interrupt();
-		          }
-            }
+								Thread.sleep(100);
+							} catch (InterruptedException e) {
+								Thread.currentThread().interrupt();
+							}
+						}
 					});
 				}
 			};
 
 			private final IInput input = new IInput() {
-				public byte read() {
-//					return 0;
+				public UnsignedByte read() {
+					// return 0;
 					throw new RuntimeException("IInput.read not implemented");
 				}
 			};
 
 			private final IOutput output = new IOutput() {
-				private byte position;
+				private int position;
 
-				public void put(final byte datum) {
-					shell.getDisplay().asyncExec(new Runnable() {
+				public void put(final UnsignedByte datum) {
+					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							try {
-	              swtDisplay.setPosition(position + 3, 10);
-	              IBitmap bitmap = Chars.chars[datum];
-	              swtDisplay.print(bitmap);
-              } catch (Exception e) {
-	              e.printStackTrace();
-              }
-            }
+								swtDisplay.setPosition(position + 3, 10);
+								IBitmap bitmap = Chars.chars[datum.toInteger()];
+								swtDisplay.print(bitmap);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
 					});
 				}
 
-				public void setPosition(byte position) {
-					this.position = position;
+				public void setPosition(UnsignedByte position) {
+					this.position = position.toInteger();
 				}
 			};
 
@@ -200,12 +203,12 @@ public class AdvancedSwtDisplayDressing {
 		executionThread = new Thread(new Runnable() {
 			public void run() {
 				try {
-	  			computer.run(context);
-	  			System.err.println("Foo");
-				} catch(Throwable t) {
+					computer.run(context);
+					System.err.println("Foo");
+				} catch (Throwable t) {
 					t.printStackTrace();
 				}
-      }
+			}
 		});
 		executionThread.start();
 	}
