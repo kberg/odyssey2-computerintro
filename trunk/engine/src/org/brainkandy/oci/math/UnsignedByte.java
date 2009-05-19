@@ -7,7 +7,7 @@ public final class UnsignedByte {
 		return new UnsignedByte(x);
 	}
 
-	private final int value;
+	private f  inal int value;
 
 	private UnsignedByte(int x) {
 		validate(x);
