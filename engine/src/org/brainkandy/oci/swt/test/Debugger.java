@@ -121,10 +121,4 @@ public class Debugger extends Computer {
 		int row = i % 8;
 		printString(column, row, value.toHexString());
 	}
-
-	@Override
-	protected void postOp() {
-		@SuppressWarnings("unused")
-    int x = 1 + 1;
-	}
 }

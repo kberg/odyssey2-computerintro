@@ -9,8 +9,7 @@ import org.brainkandy.oci.engine.IContext;
 import org.brainkandy.oci.engine.IInput;
 import org.brainkandy.oci.engine.IOutput;
 import org.brainkandy.oci.math.UnsignedByte;
-import org.brainkandy.oci.samples.CreepyCrawler;
-import org.brainkandy.oci.samples.CreepyCrawler2;
+import org.brainkandy.oci.samples.*;
 import org.brainkandy.oci.swt.SwtDisplay;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -31,9 +30,11 @@ public class AdvancedSwtDisplayDressing {
 	private final IComputer computer;
 	private final IContext context;
 	private volatile Thread executionThread;
+	private final Shell shell;
 
 	public AdvancedSwtDisplayDressing(Shell shell, SwtDisplay swtDisplay) {
 		setMenu(shell);
+		this.shell = shell;
 		this.swtDisplay = swtDisplay;
 		this.computer = new Debugger(shell, swtDisplay);
 		this.context = createContext(shell, swtDisplay);
@@ -97,12 +98,15 @@ public class AdvancedSwtDisplayDressing {
 				stopComputer();
 			}
 		});
-		createMenuItem(computerMenu, "&Reset", new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				resetComputer();
-			}
-		});
+
+		Menu samplesMenu = createMenu(shell, menuBar, "&Samples");
+		createSample(samplesMenu, "Creepy Crawler", new CreepyCrawler().getProgram());
+		createSample(samplesMenu, "Creepy Crawler2", new CreepyCrawler2().getProgram());
+		createSample(samplesMenu, "Addition A", new AdditionA().getProgram());
+		createSample(samplesMenu, "Addition B", new AdditionB().getProgram());
+		createSample(samplesMenu, "Addition C", new AdditionC().getProgram());
+		createSample(samplesMenu, "One Digit Multiplication", new OneDigitMultiplication().getProgram());
+		createSample(samplesMenu, "One Digit Divition", new OneDigitDivision().getProgram());
 
 		shell.addKeyListener(new KeyAdapter() {
 			@Override
@@ -116,6 +120,16 @@ public class AdvancedSwtDisplayDressing {
 		});
 		shell.setMenuBar(menuBar);
 	}
+
+	private void createSample(Menu samplesMenu, String title,
+      final UnsignedByte[] program) {
+		createMenuItem(samplesMenu, title, new SelectionAdapter() {
+			@Override
+      public void widgetSelected(SelectionEvent event) {
+				resetComputer(program);
+			}
+		});
+  }
 
 	private void showAllPattern() {
 		swtDisplay.setPosition(0, 0);
@@ -135,8 +149,8 @@ public class AdvancedSwtDisplayDressing {
 
 	private IContext createContext(final Shell shell,
 			final SwtDisplay swtDisplay) {
+		
 		return new IContext() {
-
 			private final IBuzzer buzzer = new IBuzzer() {
 				public void buzz() {
 					shell.getDisplay().syncExec(new Runnable() {
@@ -154,8 +168,37 @@ public class AdvancedSwtDisplayDressing {
 
 			private final IInput input = new IInput() {
 				public UnsignedByte read() {
-					// return 0;
-					throw new RuntimeException("IInput.read not implemented");
+					final UnsignedByte[] holder = new UnsignedByte[1];
+
+					final KeyAdapter keyAdapter = new KeyAdapter() {
+						@Override
+            public void keyReleased(KeyEvent e) {
+							int idx = Chars.getCharIndex(e.character);
+							if (idx >= 0) {
+								holder[0] = UnsignedByte.get(idx);
+							}
+            }
+					};
+
+					shell.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							shell.addKeyListener(keyAdapter);
+						}
+					});
+
+					while(holder[0] == null && computer.isRunning()) {
+						try {
+	            Thread.sleep(100);
+            } catch (InterruptedException e) {
+            	Thread.currentThread().interrupt();
+            }
+					}
+					shell.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							shell.removeKeyListener(keyAdapter);
+						}
+					});
+					return holder[0];
 				}
 			};
 
@@ -167,7 +210,8 @@ public class AdvancedSwtDisplayDressing {
 						public void run() {
 							try {
 								swtDisplay.setPosition(position + 3, 10);
-								IBitmap bitmap = Chars.chars[datum.toInteger()];
+								int integer = datum.toInteger();
+								IBitmap bitmap = Chars.chars[integer];
 								swtDisplay.print(bitmap);
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -177,7 +221,7 @@ public class AdvancedSwtDisplayDressing {
 				}
 
 				public void setPosition(UnsignedByte position) {
-					this.position = position.toInteger();
+					this.position = position.toBcdNumber();
 				}
 			};
 
@@ -204,12 +248,12 @@ public class AdvancedSwtDisplayDressing {
 			public void run() {
 				try {
 					computer.run(context);
-					System.err.println("Foo");
 				} catch (Throwable t) {
 					t.printStackTrace();
 				}
+				executionThread = null;
 			}
-		});
+		}, "Computer execution thread");
 		executionThread.start();
 	}
 
@@ -220,8 +264,10 @@ public class AdvancedSwtDisplayDressing {
 		computer.halt();
 	}
 
-	private void resetComputer() {
+	private void resetComputer(UnsignedByte[] program) {
 		computer.halt();
-		computer.setProgram(new CreepyCrawler2().getProgram());
+		// Should wait for halt, actually.
+		computer.reset();
+		computer.setProgram(program);
 	}
 }

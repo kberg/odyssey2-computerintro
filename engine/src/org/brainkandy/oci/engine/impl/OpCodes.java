@@ -1,27 +1,6 @@
 package org.brainkandy.oci.engine.impl;
 
-import static org.brainkandy.oci.engine.impl.Operations.BRACH_ACCUM_ZERO_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.BRACH_DECIMAL_BORROW_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.BRACH_DECIMAL_CARRY_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.BRACH_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.CLEAR_ACCUM_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.GOSUB_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.HALT_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.INPUT_ACCUM_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.NO_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.OUTPUT_ACCUM_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.RETURN_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.RND_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.SIG_OPERATION;
-import static org.brainkandy.oci.engine.impl.Operations.addToRegisterOperation;
-import static org.brainkandy.oci.engine.impl.Operations.assignValueToRegisterOperation;
-import static org.brainkandy.oci.engine.impl.Operations.inputOperation;
-import static org.brainkandy.oci.engine.impl.Operations.loadFromRegisterOperation;
-import static org.brainkandy.oci.engine.impl.Operations.outputOperation;
-import static org.brainkandy.oci.engine.impl.Operations.packOperation;
-import static org.brainkandy.oci.engine.impl.Operations.storeInRegisterOperation;
-import static org.brainkandy.oci.engine.impl.Operations.subtractFromRegisterOperation;
-import static org.brainkandy.oci.engine.impl.Operations.unpackOperation;
+import static org.brainkandy.oci.engine.impl.Operations.*;
 
 import org.brainkandy.oci.engine.IComputer;
 import org.brainkandy.oci.engine.IContext;
@@ -44,12 +23,12 @@ public class OpCodes {
 		add((byte) 0x01, CLEAR_ACCUM_OPERATION);
 		add((byte) 0x02, new IOperation() {
 			public void execute(IComputer computer, IContext context) {
-				computer.setAccumulator(computer.getAccumulator().decrement());
+				computer.setAccumulator(computer.getAccumulator().bcdDecrement());
 			}
 		});
 		add((byte) 0x03, new IOperation() {
 			public void execute(IComputer computer, IContext context) {
-				computer.setAccumulator(computer.getAccumulator().increment());
+				computer.setAccumulator(computer.getAccumulator().bcdIncrement());
 			}
 		});
 		add((byte) 0x08, RND_OPERATION);
@@ -73,7 +52,7 @@ public class OpCodes {
 			add((byte) (0xD0 + i), subtractFromRegisterOperation(i));
 		}
 		for (int i = 0; i < 16; i++) {
-			add((byte) (0xE0 + i), addToRegisterOperation(i));
+			add((byte) (0xE0 + i), addFromRegisterOperation(i));
 		}
 		for (int i = 0; i < 16; i++) {
 			add((byte) (0xA0 + i), storeInRegisterOperation(i));

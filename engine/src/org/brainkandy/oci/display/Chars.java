@@ -68,12 +68,17 @@ public class Chars {
 	};
 
 	public static Char getChar(char c) {
+		int index = getCharIndex(c);
+		return index == -1 ? null : Chars.chars[index];
+	}
+
+	public static int getCharIndex(char c) {
 		for (int i = 0; i < Chars.asciiMap.length; i++) {
 			if (c == Chars.asciiMap[i]) {
-				return Chars.chars[i];
+				return i;
 			}
 		}
-		return null;
+		return -1;
 	}
 
 	public static final char[] asciiMap = 

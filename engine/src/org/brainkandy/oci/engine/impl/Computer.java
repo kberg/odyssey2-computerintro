@@ -10,9 +10,10 @@ public class Computer implements IComputer {
 
 	private static final OpCodes opcodes = new OpCodes();
 
-	private static final int MEMORY_SIZE = 256;
+	private static final int MEMORY_SIZE = 99;
 	// The accumulator is stored as the 17th register.
-	private final UnsignedByte[] registers = new UnsignedByte[17];
+	private UnsignedByte accumulator;
+	private final UnsignedByte[] registers = new UnsignedByte[16];
 	private final UnsignedByte[] memory = new UnsignedByte[MEMORY_SIZE];
 	private UnsignedByte programCounter;
 	private final Stack<UnsignedByte> callStack;
@@ -33,14 +34,15 @@ public class Computer implements IComputer {
 	public void reset() {
 		callStack.clear();
 		for (int i = 0; i < registers.length; i++) {
-			registers[i] = UnsignedByte.ZERO;
+			setRegister(i, UnsignedByte.ZERO);
 		}
+		setAccumulator(UnsignedByte.ZERO);
 		setProgramCounter(UnsignedByte.ZERO);
 		continueRunning = true;
 	}
 
 	public UnsignedByte getAccumulator() {
-		return getRegister(16);
+		return accumulator;
 	}
 
 	public UnsignedByte getRegister(int i) {
@@ -48,7 +50,7 @@ public class Computer implements IComputer {
 	}
 
 	public void setAccumulator(UnsignedByte datum) {
-		setRegister(16, datum);
+		this.accumulator = datum;
 	}
 
 	public void setRegister(int i, UnsignedByte value) {
@@ -56,7 +58,7 @@ public class Computer implements IComputer {
 	}
 
 	public UnsignedByte getMemory(UnsignedByte offset) {
-		return memory[offset.toByte()];
+		return memory[offset.toBcdNumber()];
 	}
 
 
@@ -71,8 +73,12 @@ public class Computer implements IComputer {
 	public UnsignedByte advanceProgramCounter() {
 		UnsignedByte programCounter = getProgramCounter();
 		UnsignedByte datum = getMemory(programCounter);
-		setProgramCounter(programCounter.increment());
+		setProgramCounter(programCounter.bcdIncrement());
 		return datum;
+	}
+
+	public boolean isRunning() {
+		return continueRunning;
 	}
 
 	public void halt() {
@@ -93,7 +99,6 @@ public class Computer implements IComputer {
 			UnsignedByte opcode = advanceProgramCounter();
 			IOperation operation = opcodes.get(opcode);
 			operation.execute(this, context);
-			postOp();
 		}
 	}
 
