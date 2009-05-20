@@ -58,6 +58,11 @@ public interface IComputer {
 	void halt();
 
 	/**
+	 * Returns {@code true} if the computer is in a running state
+	 */
+	boolean isRunning();
+
+	/**
 	 * Advance the program counter to the next position.
 	 *
 	 * @return the data element of the program counter before it is incremented.

@@ -4,7 +4,6 @@ import java.util.Random;
 
 import org.brainkandy.oci.engine.IComputer;
 import org.brainkandy.oci.engine.IContext;
-import org.brainkandy.oci.math.BCD;
 import org.brainkandy.oci.math.UnsignedByte;
 
 class Operations {
@@ -79,7 +78,9 @@ class Operations {
 			// a seed to be set right on the computer.
 			// Plus, we don't know if this is correct.
 			Random random = new Random();
-			UnsignedByte b = UnsignedByte.get(random.nextInt(99));
+			int first = random.nextInt(9);
+			int second = random.nextInt(9);
+			UnsignedByte b = UnsignedByte.get((first * 16) + second);
 			computer.setAccumulator(b);
 		}
 	};
@@ -116,8 +117,8 @@ class Operations {
 				UnsignedByte registerBValue = computer.getRegister(IComputer.REGISTER_B);
 				context.getOutput().setPosition(registerBValue);
 				context.getOutput().put(computer.getRegister(i));
-				registerBValue = registerBValue.increment();
-				if (registerBValue.toInteger() >= 11) {
+				registerBValue = registerBValue.bcdIncrement();
+				if (registerBValue.toBcdNumber() >= 11) {
 					registerBValue = UnsignedByte.ZERO;
 				}
 				
@@ -138,9 +139,8 @@ class Operations {
 		return new IOperation() {
 			public void execute(IComputer computer, IContext context) {
 				UnsignedByte value = computer.getAccumulator();
-				UnsignedByte[] split = BCD.split(value);
-				computer.setRegister(i, split[0]);
-				computer.setRegister((i + 1) % 16, split[1]);
+				computer.setRegister(i, value.firstDigit());
+				computer.setRegister((i + 1) % 16, value.secondDigit());
 			}
 		};
 	}
@@ -158,18 +158,18 @@ class Operations {
 			public void execute(IComputer computer, IContext context) {
 				UnsignedByte accumulatorDatum = computer.getAccumulator();
 				UnsignedByte registerDatum = computer.getRegister(i);
-				UnsignedByte value = accumulatorDatum.subtract(registerDatum);
+				UnsignedByte value = accumulatorDatum.bcdSubtract(registerDatum);
 				computer.setAccumulator(value);
 			}
 		};
 	}
 
-	public static IOperation addToRegisterOperation(final int i) {
+	public static IOperation addFromRegisterOperation(final int i) {
 		return new IOperation() {
 			public void execute(IComputer computer, IContext context) {
 				UnsignedByte accumulatorDatum = computer.getAccumulator();
 				UnsignedByte registerDatum = computer.getRegister(i);
-				UnsignedByte value = accumulatorDatum.add(registerDatum);
+				UnsignedByte value = accumulatorDatum.bcdAdd(registerDatum);
 				computer.setAccumulator(value);
 			}
 		};
