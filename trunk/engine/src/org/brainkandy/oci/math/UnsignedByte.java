@@ -14,21 +14,20 @@ public final class UnsignedByte {
 
 	private UnsignedByte(int x) {
 		validate(x);
-		// first and second can be functions.
 		this.first = x / 16;
 		this.second = x % 16;
 		this.value = x;
 	}
 
 	private static void validate(int x) {
-//		if (x < 0 || x > 255) {
-//			throw new IllegalArgumentException("Invalid value: " + x);
-//		}
+		 if (x < 0 || x > 255) {
+		   throw new IllegalArgumentException("Invalid value: " + x);
+		 }
 	}
 
 	/**
 	 * Returns an UnsignedByte whose value is this + val.
-	 *
+	 * 
 	 * TODO: deal with overflow.
 	 */
 	public UnsignedByte bcdAdd(UnsignedByte val) {
@@ -50,21 +49,25 @@ public final class UnsignedByte {
 	}
 
 	private int denormalize(int i) {
+		if (i >= 100) {
+			// Could be that it should be i % 100 across the board.
+			return 0;
+		}
 		int firstDigit = i / 10;
 		int secondDigit = i % 10;
 		return firstDigit * 16 + secondDigit;
-  }
+	}
 
 	public UnsignedByte bcdDecrement() {
 		return bcdSubtract(UnsignedByte.ONE);
 	}
 
-  public int toInteger() {
+	public int toInteger() {
 		return value;
 	}
 
 	public int toBcdNumber() {
-		return (first * 10) + second;
+		return ((first * 10) + second) % 100;
 	}
 
 	public byte toByte() {
@@ -106,5 +109,11 @@ public final class UnsignedByte {
 	@Override
 	public String toString() {
 		return toHexString();
+	}
+
+	public static UnsignedByte get(String string) {
+		int sixteens = Character.digit(string.charAt(0), 16) << 4;
+		int ones = Character.digit(string.charAt(1), 16);
+		return UnsignedByte.get(sixteens + ones);
 	}
 }

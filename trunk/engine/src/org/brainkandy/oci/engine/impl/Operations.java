@@ -80,7 +80,7 @@ class Operations {
 			Random random = new Random();
 			int first = random.nextInt(9);
 			int second = random.nextInt(9);
-			UnsignedByte b = UnsignedByte.get((first * 16) + second);
+			UnsignedByte b = UnsignedByte.get("" + first + second);
 			computer.setAccumulator(b);
 		}
 	};
@@ -99,11 +99,7 @@ class Operations {
 		}
 	};
 
-	public static final IOperation OUTPUT_ACCUM_OPERATION = new IOperation() {
-		public void execute(IComputer computer, IContext context) {
-			context.getOutput().put(computer.getAccumulator());
-		}
-	};
+	public static final IOperation OUTPUT_ACCUM_OPERATION = outputOperation(-1);
 
 	public static final IOperation CLEAR_ACCUM_OPERATION = new IOperation() {
 		public void execute(IComputer computer, IContext context) {
@@ -111,12 +107,15 @@ class Operations {
 		}
 	};
 
+	
 	public static IOperation outputOperation(final int i) {
 		return new IOperation() {
 			public void execute(IComputer computer, IContext context) {
 				UnsignedByte registerBValue = computer.getRegister(IComputer.REGISTER_B);
 				context.getOutput().setPosition(registerBValue);
-				context.getOutput().put(computer.getRegister(i));
+				UnsignedByte value = (i == -1 ? computer.getAccumulator() : computer.getRegister(i))
+				;
+				context.getOutput().put(value);
 				registerBValue = registerBValue.bcdIncrement();
 				if (registerBValue.toBcdNumber() >= 11) {
 					registerBValue = UnsignedByte.ZERO;

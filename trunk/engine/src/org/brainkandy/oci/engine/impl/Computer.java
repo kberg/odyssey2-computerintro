@@ -98,7 +98,15 @@ public class Computer implements IComputer {
 		while(continueRunning) {
 			UnsignedByte opcode = advanceProgramCounter();
 			IOperation operation = opcodes.get(opcode);
+			if (operation == null) {
+				throw new IllegalArgumentException("Unknown Opcode " + opcode);
+			}
 			operation.execute(this, context);
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
