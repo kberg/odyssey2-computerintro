@@ -11,6 +11,7 @@ import org.brainkandy.oci.math.UnsignedByte;
  */
 public interface IComputer {
 	public static final int REGISTER_B = 11;
+	public static final int REGISTER_C = 12;
 
 	/**
 	 * Assign a byte value to a register

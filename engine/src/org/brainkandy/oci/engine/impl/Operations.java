@@ -7,11 +7,6 @@ import org.brainkandy.oci.engine.IContext;
 import org.brainkandy.oci.math.UnsignedByte;
 
 class Operations {
-	private static class IncompleteOperationException extends RuntimeException {
-		public IncompleteOperationException(String type) {
-			super("Incomplete operation " + type);
-		}
-	}
 
 	public static final IOperation NO_OPERATION = new IOperation() {
 		public void execute(IComputer computer, IContext context) {
@@ -32,30 +27,39 @@ class Operations {
 
 	public static final IOperation BRACH_DECIMAL_BORROW_OPERATION = new IOperation() {
 		public void execute(IComputer computer, IContext context) {
-			throw new IncompleteOperationException("BRACH_DECIMAL_BORROW_OPERATION");
+			UnsignedByte accum = computer.getAccumulator();
+			UnsignedByte programCounter = computer.advanceProgramCounter();
+			int value = accum.firstDigit().toInteger();
+			if (value == 9) {
+				computer.setProgramCounter(programCounter);
+			}
 		}
 	};
 
 	public static final IOperation BRACH_DECIMAL_CARRY_OPERATION = new IOperation() {
 		public void execute(IComputer computer, IContext context) {
-			throw new IncompleteOperationException("BRACH_DECIMAL_CARRY_OPERATION");
+			UnsignedByte accum = computer.getAccumulator();
+			UnsignedByte programCounter = computer.advanceProgramCounter();
+			int value = accum.firstDigit().toInteger();
+			if (value != 0) {
+				computer.setProgramCounter(programCounter);
+			}
 		}
 	};
 
 	public static final IOperation BRACH_OPERATION = new IOperation() {
 		public void execute(IComputer computer, IContext context) {
-			UnsignedByte datum = computer.advanceProgramCounter();
-			computer.setProgramCounter(datum);
+			UnsignedByte programCounter = computer.advanceProgramCounter();
+			computer.setProgramCounter(programCounter);
 		}
 	};
 
 	public static final IOperation BRACH_ACCUM_ZERO_OPERATION = new IOperation() {
 		public void execute(IComputer computer, IContext context) {
+			UnsignedByte programCounter = computer.advanceProgramCounter();
 			if (computer.getAccumulator().equals(UnsignedByte.ZERO)) {
-				UnsignedByte datum = computer.advanceProgramCounter();
-				computer.setProgramCounter(datum);
+				computer.setProgramCounter(programCounter);
 			}
-			throw new IncompleteOperationException("BRACH_ACCUM_ZERO");
 		}
 	};
 
@@ -107,20 +111,20 @@ class Operations {
 		}
 	};
 
-	
 	public static IOperation outputOperation(final int i) {
 		return new IOperation() {
 			public void execute(IComputer computer, IContext context) {
-				UnsignedByte registerBValue = computer.getRegister(IComputer.REGISTER_B);
+				UnsignedByte registerBValue = computer
+				    .getRegister(IComputer.REGISTER_B);
 				context.getOutput().setPosition(registerBValue);
-				UnsignedByte value = (i == -1 ? computer.getAccumulator() : computer.getRegister(i))
-				;
+				UnsignedByte value = (i == -1 ? computer.getAccumulator() : computer
+				    .getRegister(i));
 				context.getOutput().put(value);
 				registerBValue = registerBValue.bcdIncrement();
 				if (registerBValue.toBcdNumber() >= 11) {
 					registerBValue = UnsignedByte.ZERO;
 				}
-				
+
 				computer.setRegister(IComputer.REGISTER_B, registerBValue);
 			}
 		};
@@ -129,7 +133,11 @@ class Operations {
 	public static IOperation packOperation(final int i) {
 		return new IOperation() {
 			public void execute(IComputer computer, IContext context) {
-				throw new IncompleteOperationException("Pack");
+				UnsignedByte first = computer.getRegister(i);
+				UnsignedByte second = computer.getRegister((i + 1) % 16);
+				int sum = first.toInteger() + second.toInteger();
+				UnsignedByte result = UnsignedByte.get(sum);
+				computer.setAccumulator(result);
 			}
 		};
 	}
@@ -189,4 +197,57 @@ class Operations {
 			}
 		};
 	}
+
+	public static IOperation branchNotEqualAccumulator(final int i) {
+		return new IOperation() {
+			public void execute(IComputer computer, IContext context) {
+				UnsignedByte register = computer.getRegister(i);
+				UnsignedByte accum = computer.getRegister(i);
+				UnsignedByte programCounter = computer.advanceProgramCounter();
+				if (register.toInteger() != accum.toInteger()) {
+					computer.setProgramCounter(programCounter);
+				}
+			}
+		};
+	}
+
+	public static IOperation branchEqualAccumulator(final int i) {
+		return new IOperation() {
+			public void execute(IComputer computer, IContext context) {
+				UnsignedByte register = computer.getRegister(i);
+				UnsignedByte accum = computer.getRegister(i);
+				UnsignedByte programCounter = computer.advanceProgramCounter();
+				if (register.toInteger() == accum.toInteger()) {
+					computer.setProgramCounter(programCounter);
+				}
+			}
+		};
+	}
+
+	public static IOperation branchGreaterThanAccumulator(final int i) {
+		return new IOperation() {
+			public void execute(IComputer computer, IContext context) {
+				UnsignedByte register = computer.getRegister(i);
+				UnsignedByte accum = computer.getRegister(i);
+				UnsignedByte programCounter = computer.advanceProgramCounter();
+				if (register.toInteger() > accum.toInteger()) {
+					computer.setProgramCounter(programCounter);
+				}
+			}
+		};
+	}
+
+	public static IOperation branchLessThanAccumulator(final int i) {
+		return new IOperation() {
+			public void execute(IComputer computer, IContext context) {
+				UnsignedByte register = computer.getRegister(i);
+				UnsignedByte accum = computer.getRegister(i);
+				UnsignedByte programCounter = computer.advanceProgramCounter();
+				if (register.toInteger() < accum.toInteger()) {
+					computer.setProgramCounter(programCounter);
+				}
+			}
+		};
+	}
+
 }

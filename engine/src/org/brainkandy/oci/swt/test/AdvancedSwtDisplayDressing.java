@@ -8,9 +8,11 @@ import org.brainkandy.oci.engine.IComputer;
 import org.brainkandy.oci.engine.IContext;
 import org.brainkandy.oci.engine.IInput;
 import org.brainkandy.oci.engine.IOutput;
+import org.brainkandy.oci.math.Bytes;
 import org.brainkandy.oci.math.UnsignedByte;
-import org.brainkandy.oci.samples.*;
+import org.brainkandy.oci.samples.Sample;
 import org.brainkandy.oci.swt.SwtDisplay;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -31,6 +33,8 @@ public class AdvancedSwtDisplayDressing {
 	private final IContext context;
 	private volatile Thread executionThread;
 	private final Shell shell;
+	private String program;
+
 
 	public AdvancedSwtDisplayDressing(Shell shell, SwtDisplay swtDisplay) {
 		setMenu(shell);
@@ -86,6 +90,12 @@ public class AdvancedSwtDisplayDressing {
 		});
 
 		Menu computerMenu = createMenu(shell, menuBar, "&Computer");
+		createMenuItem(computerMenu, "&Enter Program", new SelectionAdapter() {
+			@Override
+      public void widgetSelected(SelectionEvent e) {
+				enterProgram();
+      }
+		});
 		createMenuItem(computerMenu, "&Start", new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -100,13 +110,9 @@ public class AdvancedSwtDisplayDressing {
 		});
 
 		Menu samplesMenu = createMenu(shell, menuBar, "&Samples");
-		createSample(samplesMenu, "Creepy Crawler", new CreepyCrawler().getProgram());
-		createSample(samplesMenu, "Creepy Crawler2", new CreepyCrawler2().getProgram());
-		createSample(samplesMenu, "Addition A", new AdditionA().getProgram());
-		createSample(samplesMenu, "Addition B", new AdditionB().getProgram());
-		createSample(samplesMenu, "Addition C", new AdditionC().getProgram());
-		createSample(samplesMenu, "One Digit Multiplication", new OneDigitMultiplication().getProgram());
-		createSample(samplesMenu, "One Digit Divition", new OneDigitDivision().getProgram());
+		for (Sample sample : Sample.values()) {
+			createSample(samplesMenu, sample.getName(), sample.getSource());
+		}
 
 		shell.addKeyListener(new KeyAdapter() {
 			@Override
@@ -122,7 +128,7 @@ public class AdvancedSwtDisplayDressing {
 	}
 
 	private void createSample(Menu samplesMenu, String title,
-      final UnsignedByte[] program) {
+      final String program) {
 		createMenuItem(samplesMenu, title, new SelectionAdapter() {
 			@Override
       public void widgetSelected(SelectionEvent event) {
@@ -209,7 +215,7 @@ public class AdvancedSwtDisplayDressing {
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							try {
-								swtDisplay.setPosition(position + 3, 10);
+								swtDisplay.setPosition(position, 10);
 								int integer = datum.toInteger();
 								IBitmap bitmap = Chars.chars[integer];
 								swtDisplay.print(bitmap);
@@ -240,6 +246,18 @@ public class AdvancedSwtDisplayDressing {
 		};
 	}
 
+	private void enterProgram() {
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+ 				InputDialog dialog = new InputDialog(shell, "Enter program", "Message", program, null);
+				if (dialog.open() == InputDialog.OK) {
+					AdvancedSwtDisplayDressing.this.program = dialog.getValue();
+					resetComputer(program);
+				}
+      }
+		});
+  }
+
 	private void startComputer() {
 		if (executionThread != null) {
 			throw new IllegalStateException("Already running");
@@ -264,10 +282,11 @@ public class AdvancedSwtDisplayDressing {
 		computer.halt();
 	}
 
-	private void resetComputer(UnsignedByte[] program) {
+	private void resetComputer(String program) {
 		computer.halt();
 		// Should wait for halt, actually.
 		computer.reset();
-		computer.setProgram(program);
+		this.program = program;
+		computer.setProgram(Bytes.codify(program));
 	}
 }
