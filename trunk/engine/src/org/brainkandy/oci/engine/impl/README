@@ -1,0 +1,10 @@
+Known Behavioral Issues:
+
+1. When Cartridge show characters above ASCII set, it shows damaged versions
+of the standard character set. In the SWT sample, it throws an exception.
+2. When a character is placed out of bounds, the behavior looks odd. In this case,
+the output merely wraps around.
+3. The cartridge requries a NOOP after three consecutive output statements. That
+is not required for the emulator.
+4. Curious: what do UNP.F and PAK.F do?
+5. What does PAK do with 0 F? PAK 9 F? PAK A FF?

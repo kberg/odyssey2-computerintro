@@ -10,8 +10,7 @@ public class Computer implements IComputer {
 
 	private static final OpCodes opcodes = new OpCodes();
 
-	private static final int MEMORY_SIZE = 99;
-	// The accumulator is stored as the 17th register.
+	private static final int MEMORY_SIZE = 100;
 	private UnsignedByte accumulator;
 	private final UnsignedByte[] registers = new UnsignedByte[16];
 	private final UnsignedByte[] memory = new UnsignedByte[MEMORY_SIZE];
@@ -102,11 +101,6 @@ public class Computer implements IComputer {
 				throw new IllegalArgumentException("Unknown Opcode " + opcode);
 			}
 			operation.execute(this, context);
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 

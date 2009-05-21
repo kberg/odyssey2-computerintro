@@ -10,13 +10,6 @@ public class OpCodes {
 	private final IOperation[] operations = new IOperation[256];
 
 	public OpCodes() {
-		for (int i = 0; i < 16; i++) {
-			add((byte) (0x70 + i), inputOperation(i));
-		}
-		for (int i = 0; i < 16; i++) {
-			add((byte) (0xC0 + i), outputOperation(i));
-		}
-
 		add((byte) 0x04, INPUT_ACCUM_OPERATION);
 		add((byte) 0x0b, OUTPUT_ACCUM_OPERATION);
 		add((byte) 0x05, SIG_OPERATION);
@@ -34,31 +27,27 @@ public class OpCodes {
 		add((byte) 0x08, RND_OPERATION);
 		add((byte) 0x09, new IOperation() {
 			public void execute(IComputer computer, IContext context) {
-				UnsignedByte register = computer.getRegister(IComputer.REGISTER_B);
+				UnsignedByte register = computer.getRegister(IComputer.REGISTER_C);
 				UnsignedByte datum = computer.getMemory(register);
 				computer.setAccumulator(datum);
 			}
 		});
 		for (int i = 0; i < 16; i++) {
+			add((byte) (0x70 + i), inputOperation(i));
+			add((byte) (0xC0 + i), outputOperation(i));
 			add((byte) (0x80 + i), packOperation(i));
-		}
-		for (int i = 0; i < 16; i++) {
 			add((byte) (0xB0 + i), unpackOperation(i));
-		}
-		for (int i = 0; i < 16; i++) {
 			add((byte) (0x90 + i), loadFromRegisterOperation(i));
-		}
-		for (int i = 0; i < 16; i++) {
 			add((byte) (0xD0 + i), subtractFromRegisterOperation(i));
-		}
-		for (int i = 0; i < 16; i++) {
 			add((byte) (0xE0 + i), addFromRegisterOperation(i));
-		}
-		for (int i = 0; i < 16; i++) {
 			add((byte) (0xA0 + i), storeInRegisterOperation(i));
-		}
-		for (int i = 0; i < 16; i++) {
 			add((byte) (0x60 + i), assignValueToRegisterOperation(i));
+
+			add((byte) (0x20 + i), branchNotEqualAccumulator(i));
+			add((byte) (0x30 + i), branchEqualAccumulator(i));
+			add((byte) (0x40 + i), branchGreaterThanAccumulator(i));
+			add((byte) (0x50 + i), branchLessThanAccumulator(i));
+			
 		}
 		add((byte) 0x00, NO_OPERATION);
 		add((byte) 0xFF, HALT_OPERATION);
