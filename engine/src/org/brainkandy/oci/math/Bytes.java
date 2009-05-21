@@ -12,9 +12,7 @@ public class Bytes {
 		int len = s.length();
 		UnsignedByte[] data = new UnsignedByte[len / 2];
 		for (int i = 0, idx = 0; i < len; i += 2, idx++) {
-			int sixteens = Character.digit(s.charAt(i), 16) << 4;
-			int ones = Character.digit(s.charAt(i + 1), 16);
-			UnsignedByte value = UnsignedByte.get(sixteens + ones);
+			UnsignedByte value = UnsignedByte.get(s.substring(i, i + 2));
 			data[idx] = value;
 		}
 		return data;

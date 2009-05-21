@@ -119,6 +119,6 @@ public class Debugger extends Computer {
 		super.setRegister(i, value);
 		int column = i <= 7 ? 28 : 34;
 		int row = i % 8;
-		printString(column, row, value.toHexString());
+		printString(column, row, (value == null ? UnsignedByte.ZERO : value).toHexString());
 	}
 }
