@@ -217,6 +217,8 @@ public class AdvancedSwtDisplayDressing {
 							try {
 								swtDisplay.setPosition(position, 10);
 								int integer = datum.toInteger();
+								char c = Chars.asciiMap[integer];
+								System.out.println("[" + c + "] " + position);
 								IBitmap bitmap = Chars.chars[integer];
 								swtDisplay.print(bitmap);
 							} catch (Exception e) {
@@ -227,7 +229,7 @@ public class AdvancedSwtDisplayDressing {
 				}
 
 				public void setPosition(UnsignedByte position) {
-					this.position = position.toBcdNumber();
+					this.position = position.bcdGet();
 				}
 			};
 

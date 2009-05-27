@@ -47,6 +47,16 @@ public interface IComputer {
 	UnsignedByte getProgramCounter();
 
 	/**
+	 * Advance the program counter to the next position.
+	 *
+	 * @return the data element of the program counter before it is incremented.
+	 */
+	UnsignedByte advanceProgramCounter();
+	void saveProgramCounter();
+	UnsignedByte restoreProgramCounter();
+
+	
+	/**
 	 * Return the data value at a certain 
 	 * @param programCounter
 	 * @return
@@ -63,14 +73,6 @@ public interface IComputer {
 	 */
 	boolean isRunning();
 
-	/**
-	 * Advance the program counter to the next position.
-	 *
-	 * @return the data element of the program counter before it is incremented.
-	 */
-	UnsignedByte advanceProgramCounter();
-	void saveProgramCounter();
-	UnsignedByte restoreProgramCounter();
 	void reset();
 	void run(IContext context);
 	void setProgram(UnsignedByte... bytes);
