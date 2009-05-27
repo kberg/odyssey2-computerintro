@@ -35,7 +35,6 @@ public class AdvancedSwtDisplayDressing {
 	private final Shell shell;
 	private String program;
 
-
 	public AdvancedSwtDisplayDressing(Shell shell, SwtDisplay swtDisplay) {
 		setMenu(shell);
 		this.shell = shell;
