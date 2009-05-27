@@ -8,6 +8,7 @@ import org.brainkandy.oci.engine.IComputer;
 import org.brainkandy.oci.engine.IContext;
 import org.brainkandy.oci.engine.IInput;
 import org.brainkandy.oci.engine.IOutput;
+import org.brainkandy.oci.engine.impl.Computer;
 import org.brainkandy.oci.math.Bytes;
 import org.brainkandy.oci.math.UnsignedByte;
 import org.brainkandy.oci.samples.Sample;
@@ -35,12 +36,16 @@ public class AdvancedSwtDisplayDressing {
 	private final Shell shell;
 	private String program;
 
+	private Debugger debugger;
+
 	public AdvancedSwtDisplayDressing(Shell shell, SwtDisplay swtDisplay) {
 		setMenu(shell);
 		this.shell = shell;
 		this.swtDisplay = swtDisplay;
-		this.computer = new Debugger(shell, swtDisplay);
+		this.computer = new Computer();
+		this.debugger = new Debugger(shell, swtDisplay);
 		this.context = createContext(shell, swtDisplay);
+		computer.setListener(debugger);
 	}
 
 	private Menu createMenu(Shell shell, Menu menuBar, String text) {
