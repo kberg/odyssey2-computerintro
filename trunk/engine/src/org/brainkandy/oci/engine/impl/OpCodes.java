@@ -9,6 +9,12 @@ import org.brainkandy.oci.math.UnsignedByte;
 public class OpCodes {
 	private final IOperation[] operations = new IOperation[256];
 
+	/**
+	 * 
+	 */
+	/**
+	 * 
+	 */
 	public OpCodes() {
 		add((byte) 0x04, INPUT_ACCUM_OPERATION);
 		add((byte) 0x0b, OUTPUT_ACCUM_OPERATION);
@@ -30,6 +36,9 @@ public class OpCodes {
 				UnsignedByte register = computer.getRegister(IComputer.REGISTER_C);
 				UnsignedByte datum = computer.getMemory(register);
 				computer.setAccumulator(datum);
+				// Increment Register C
+				UnsignedByte newRegisterValue = register.bcdIncrement();
+				computer.setRegister(IComputer.REGISTER_C, newRegisterValue);
 			}
 		});
 		for (int i = 0; i < 16; i++) {
