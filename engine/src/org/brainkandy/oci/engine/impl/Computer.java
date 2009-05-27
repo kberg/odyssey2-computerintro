@@ -22,6 +22,8 @@ public final class Computer implements IComputer {
 
 	private IComputerListener listener;
 
+	private IContext context;
+
 	public Computer() {
 		callStack = new Stack<UnsignedByte>();
 		clear();
@@ -100,11 +102,9 @@ public final class Computer implements IComputer {
 		throw new RuntimeException("restoreProgramCounter not written");
 	}
 
-	public void run(IContext context) {
-		reset();
+	public void run() {
 		announce(DebugCode.RUN);
 		while(continueRunning) {
-			announceNextStatement();
 			UnsignedByte opcode = advanceProgramCounter();
 			IOperation operation = opcodes.get(opcode);
 			if (operation == null) {
@@ -113,9 +113,6 @@ public final class Computer implements IComputer {
 			operation.execute(this, context);
 		}
 	}
-
-	protected void announceNextStatement() {
-  }
 
 	public void setProgram(UnsignedByte... unsignedBytes) {
 		for (int i = 0; i < unsignedBytes.length; i++) {
@@ -129,11 +126,15 @@ public final class Computer implements IComputer {
 
 	private void announce(DebugCode code, Object object) {
 		if (listener != null) {
-			listener.announce(this, code, object);
+			listener.announce(code, object);
 		}
   }
 
 	public void setListener(IComputerListener listener) {
 		this.listener = listener;
   }
+
+	public void setContext(IContext context) {
+		this.context = context;
+	}
 }
