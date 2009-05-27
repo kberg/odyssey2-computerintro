@@ -43,7 +43,7 @@ public class AdvancedSwtDisplayDressing {
 		this.shell = shell;
 		this.swtDisplay = swtDisplay;
 		this.computer = new Computer();
-		this.debugger = new Debugger(shell, swtDisplay);
+		this.debugger = new Debugger(shell, swtDisplay, computer);
 		this.context = createContext(shell, swtDisplay);
 		computer.setListener(debugger);
 	}
@@ -96,9 +96,9 @@ public class AdvancedSwtDisplayDressing {
 		Menu computerMenu = createMenu(shell, menuBar, "&Computer");
 		createMenuItem(computerMenu, "&Enter Program", new SelectionAdapter() {
 			@Override
-      public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e) {
 				enterProgram();
-      }
+			}
 		});
 		createMenuItem(computerMenu, "&Start", new SelectionAdapter() {
 			@Override
@@ -132,14 +132,14 @@ public class AdvancedSwtDisplayDressing {
 	}
 
 	private void createSample(Menu samplesMenu, String title,
-      final String program) {
+			final String program) {
 		createMenuItem(samplesMenu, title, new SelectionAdapter() {
 			@Override
-      public void widgetSelected(SelectionEvent event) {
+			public void widgetSelected(SelectionEvent event) {
 				resetComputer(program);
 			}
 		});
-  }
+	}
 
 	private void showAllPattern() {
 		swtDisplay.setPosition(0, 0);
@@ -159,7 +159,7 @@ public class AdvancedSwtDisplayDressing {
 
 	private IContext createContext(final Shell shell,
 			final SwtDisplay swtDisplay) {
-		
+
 		return new IContext() {
 			private final IBuzzer buzzer = new IBuzzer() {
 				public void buzz() {
@@ -182,12 +182,12 @@ public class AdvancedSwtDisplayDressing {
 
 					final KeyAdapter keyAdapter = new KeyAdapter() {
 						@Override
-            public void keyReleased(KeyEvent e) {
+						public void keyReleased(KeyEvent e) {
 							int idx = Chars.getCharIndex(e.character);
 							if (idx >= 0) {
 								holder[0] = UnsignedByte.get(idx);
 							}
-            }
+						}
 					};
 
 					shell.getDisplay().syncExec(new Runnable() {
@@ -196,12 +196,12 @@ public class AdvancedSwtDisplayDressing {
 						}
 					});
 
-					while(holder[0] == null && computer.isRunning()) {
+					while (holder[0] == null && computer.isRunning()) {
 						try {
-	            Thread.sleep(100);
-            } catch (InterruptedException e) {
-            	Thread.currentThread().interrupt();
-            }
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+						}
 					}
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
@@ -253,14 +253,15 @@ public class AdvancedSwtDisplayDressing {
 	private void enterProgram() {
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
- 				InputDialog dialog = new InputDialog(shell, "Enter program", "Message", program, null);
+				InputDialog dialog = new InputDialog(shell, "Enter program",
+						"Message", program, null);
 				if (dialog.open() == InputDialog.OK) {
 					AdvancedSwtDisplayDressing.this.program = dialog.getValue();
 					resetComputer(program);
 				}
-      }
+			}
 		});
-  }
+	}
 
 	private void startComputer() {
 		if (executionThread != null) {
@@ -269,7 +270,12 @@ public class AdvancedSwtDisplayDressing {
 		executionThread = new Thread(new Runnable() {
 			public void run() {
 				try {
-					computer.run(context);
+					computer.setContext(context);
+					computer.reset();
+					debugger.reset();
+					while (debugger.keepRunning()) {
+					  debugger.continueExecution();
+					}
 				} catch (Throwable t) {
 					t.printStackTrace();
 				}

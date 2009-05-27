@@ -15,12 +15,15 @@ public class Debugger implements IComputerListener {
 
 	private final Shell shell;
 	private final SwtDisplay swtDisplay;
+	private final IComputer computer;
 
 	private final Set<Integer> breakpoints = new TreeSet<Integer>();
+	private boolean keepRunning;
 
-	public Debugger(Shell shell, SwtDisplay swtDisplay) {
+	public Debugger(Shell shell, SwtDisplay swtDisplay, IComputer computer) {
 		this.shell = shell;
 		this.swtDisplay = swtDisplay;
+		this.computer = computer;
 		initializeDisplay();
 	}
 
@@ -61,10 +64,19 @@ public class Debugger implements IComputerListener {
 		});
 	}
 
-	public void announce(IComputer computer, DebugCode code, Object data) {
+	public void reset() {
+		keepRunning = true;
+	}
+
+	public void continueExecution() {
+		
+	}
+
+	public void announce(DebugCode code, Object data) {
 		switch(code) {
 			case HALT:
 				showRunningState("Stopped");
+				keepRunning = false;
 				break;
 	
 			case RUN:
@@ -93,5 +105,9 @@ public class Debugger implements IComputerListener {
 
 	private void showRunningState(String s) {
 		printString(7, 1, s);
+	}
+
+	public boolean keepRunning() {
+		return keepRunning;
 	}
 }
