@@ -95,7 +95,6 @@ public class Computer implements IComputer {
 	public void run(IContext context) {
 		reset();
 		while(continueRunning) {
-			UnsignedByte programCounter = getProgramCounter();
 			UnsignedByte opcode = advanceProgramCounter();
 			IOperation operation = opcodes.get(opcode);
 			if (operation == null) {

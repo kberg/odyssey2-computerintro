@@ -2,7 +2,7 @@ package org.brainkandy.oci.display;
 
 public class TestDisplay {
 	public static void main(String[] args) {
-		for(Char c : Chars.chars) {
+		for(Char c : Chars.getChars()) {
 			show(c);
 		}
 	}

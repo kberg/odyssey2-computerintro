@@ -1,7 +1,9 @@
 package org.brainkandy.oci.display;
 
+import org.brainkandy.oci.context.IBitmap;
+
 public class Chars {
-	public static final Char[] chars = new Char[] {
+	private static final Char[] chars = new Char[] {
 		new Char("7cc6c6c6c6c67c"), // 0
 		new Char("1838181818183c"), // 1
 		new Char("3c660c1830607e"), // 2
@@ -66,6 +68,33 @@ public class Chars {
 		new Char("000363ffff1808"), // airplane
 		new Char("0000001038fe7c"), // ship
 	};
+
+	public static Char[] getChars() {
+		return chars;
+	}
+
+	public static IBitmap getChar(int index) {
+		try {
+	    return chars[index];
+    } catch (ArrayIndexOutOfBoundsException e) {
+    	if (index < 0) {
+    		throw new ArrayIndexOutOfBoundsException(e.getMessage());
+    	}
+    	index = index & chars.length;
+    	return mutate(chars[index], 1);
+    }
+	}
+
+	// Kind of expensive just for a hack.
+	private static IBitmap mutate(final IBitmap bitmap, final int rows) {
+		return new IBitmap() {
+			public byte[] getBitmap() {
+				byte[] array = new byte[bitmap.getBitmap().length];
+				System.arraycopy(bitmap.getBitmap(), rows, array, 0, array.length - rows);
+				return array;
+      }
+		};
+  }
 
 	public static Char getChar(char c) {
 		int index = getCharIndex(c);

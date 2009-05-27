@@ -82,8 +82,8 @@ class Operations {
 			// a seed to be set right on the computer.
 			// Plus, we don't know if this is correct.
 			Random random = new Random();
-			int first = random.nextInt(9);
-			int second = random.nextInt(9);
+			int first = random.nextInt(10);
+			int second = random.nextInt(10);
 			UnsignedByte b = UnsignedByte.get("" + first + second);
 			computer.setAccumulator(b);
 		}
