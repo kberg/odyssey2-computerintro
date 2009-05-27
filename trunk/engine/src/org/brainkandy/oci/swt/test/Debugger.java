@@ -64,11 +64,11 @@ public class Debugger extends Computer {
 	@Override
 	public void halt() {
 		super.halt();
-		showRunningState(false);
+		showRunningState("Stopped");
 	}
 
-	private void showRunningState(boolean b) {
-		printString(7, 1, b ? "Runn" : "Wait");
+	private void showRunningState(String s) {
+		printString(7, 1, s);
 	}
 
 	// @Override
@@ -86,8 +86,8 @@ public class Debugger extends Computer {
 
 	@Override
 	public void run(IContext context) {
+		showRunningState("Running");
 		super.run(context);
-		showRunningState(true);
 	}
 
 	// @Override
