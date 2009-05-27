@@ -8,6 +8,7 @@ import org.brainkandy.oci.engine.IComputer;
 import org.brainkandy.oci.engine.IContext;
 import org.brainkandy.oci.engine.IInput;
 import org.brainkandy.oci.engine.IOutput;
+import org.brainkandy.oci.engine.impl.Computer;
 import org.brainkandy.oci.math.Bytes;
 import org.brainkandy.oci.math.UnsignedByte;
 import org.brainkandy.oci.samples.Sample;
@@ -40,7 +41,7 @@ public class AdvancedSwtDisplayDressing {
 		setMenu(shell);
 		this.shell = shell;
 		this.swtDisplay = swtDisplay;
-		this.computer = new Debugger(shell, swtDisplay);
+		this.computer = new Computer();// (shell, swtDisplay);
 		this.context = createContext(shell, swtDisplay);
 	}
 
@@ -141,8 +142,8 @@ public class AdvancedSwtDisplayDressing {
 		swtDisplay.setPosition(0, 0);
 		int j = 0;
 		for (int i = 0; i < 1000; i++) {
-			swtDisplay.print(Chars.chars[j]);
-			j = (j + 1) % Chars.chars.length;
+			swtDisplay.print(Chars.getChar(j));
+			j = (j + 1) % Chars.getChars().length;
 		}
 	}
 
@@ -217,7 +218,7 @@ public class AdvancedSwtDisplayDressing {
 							try {
 								swtDisplay.setPosition(position, 10);
 								int integer = datum.toInteger();
-								IBitmap bitmap = Chars.chars[integer];
+								IBitmap bitmap = Chars.getChar(integer);
 								swtDisplay.print(bitmap);
 							} catch (Exception e) {
 								e.printStackTrace();

@@ -82,7 +82,7 @@ public class SwtDisplayDressing {
 					char c = Character.toUpperCase(e.character);
 					for (int i = 0; i < Chars.asciiMap.length; i++) {
 						if (c == Chars.asciiMap[i]) {
-							swtDisplay.print(Chars.chars[i]);
+							swtDisplay.print(Chars.getChar(i));
 						}
 					}
 				}
@@ -95,8 +95,8 @@ public class SwtDisplayDressing {
 		swtDisplay.setPosition(0, 0);
 		int j = 0;
 		for (int i = 0; i < 1000; i++) {
-			swtDisplay.print(Chars.chars[j]);
-			j = (j + 1) % Chars.chars.length;
+			swtDisplay.print(Chars.getChar(j));
+			j = (j + 1) % Chars.getChars().length;
 		}
 	}
 
