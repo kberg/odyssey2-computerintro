@@ -1,22 +1,22 @@
 package org.brainkandy.oci.swt.test;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.brainkandy.oci.display.Chars;
-import org.brainkandy.oci.engine.IContext;
-import org.brainkandy.oci.engine.impl.Computer;
+import org.brainkandy.oci.engine.DebugCode;
+import org.brainkandy.oci.engine.IComputer;
+import org.brainkandy.oci.engine.IComputerListener;
 import org.brainkandy.oci.math.UnsignedByte;
 import org.brainkandy.oci.swt.SwtDisplay;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- * Typically I wouldn't use inheritence to implement a debugger, but the truth
- * is it works rather well for small execution frameworks. Sure a listening
- * mechanism would be better, but this works just fine. Feel free to improve
- * this!
- */
-public class Debugger extends Computer {
+public class Debugger implements IComputerListener {
 
 	private final Shell shell;
 	private final SwtDisplay swtDisplay;
+
+	private final Set<Integer> breakpoints = new TreeSet<Integer>();
 
 	public Debugger(Shell shell, SwtDisplay swtDisplay) {
 		this.shell = shell;
@@ -61,64 +61,37 @@ public class Debugger extends Computer {
 		});
 	}
 
-	@Override
-	public void halt() {
-		super.halt();
-		showRunningState("Stopped");
+	public void announce(IComputer computer, DebugCode code, Object data) {
+		switch(code) {
+			case HALT:
+				showRunningState("Stopped");
+				break;
+	
+			case RUN:
+				showRunningState("Running");
+				break;
+	
+			case ACCUM_SET:
+				printString(8, 3, computer.getAccumulator().toString());
+				break;
+	
+			case PROGRAM_COUNTER_CHANGE:
+				printString(8, 2, computer.getProgramCounter().toString());
+				break;
+	
+			case REGISTER_SET: {
+				int i = (Integer) data;
+				int column = i <= 7 ? 28 : 34;
+				int row = i % 8;
+				UnsignedByte value = computer.getRegister(i);
+				value = value == null ? UnsignedByte.ZERO : value;
+				printString(column, row, value.toString());
+				break;
+			}
+	  }
 	}
 
 	private void showRunningState(String s) {
 		printString(7, 1, s);
-	}
-
-	// @Override
-	// public void reset() {
-	// // TODO Auto-generated method stub
-	// super.reset();
-	// }
-	//
-	// @Override
-	// public byte restoreProgramCounter() {
-	// // TODO Auto-generated method stub
-	// return super.restoreProgramCounter();
-	// }
-	//
-
-	@Override
-	public void run(IContext context) {
-		showRunningState("Running");
-		super.run(context);
-	}
-
-	// @Override
-	// public void saveProgramCounter() {
-	// // TODO Auto-generated method stub
-	// super.saveProgramCounter();
-	// }
-
-	@Override
-	public void setAccumulator(UnsignedByte datum) {
-		super.setAccumulator(datum);
-		printString(8, 3, datum.toString());
-	}
-
-	// @Override
-	// public void setProgram(UnsignedByte... bytes) {
-	// // TODO Auto-generated method stub
-	// super.setProgram(UnsignedBytes);
-	// }
-
-	@Override
-	public void setProgramCounter(UnsignedByte programCounter) {
-		super.setProgramCounter(programCounter);
-		printString(8, 2, programCounter.toString());
-	}
-
-	@Override
-	public void setRegister(int i, UnsignedByte value) {
-		super.setRegister(i, value);
-		int column = i <= 7 ? 28 : 34;
-		int row = i % 8;
-		printString(column, row, (value == null ? UnsignedByte.ZERO : value).toString());
 	}
 }

@@ -76,4 +76,5 @@ public interface IComputer {
 	void reset();
 	void run(IContext context);
 	void setProgram(UnsignedByte... bytes);
+  void setListener(IComputerListener listener);
 }
