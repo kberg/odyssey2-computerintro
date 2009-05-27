@@ -57,7 +57,7 @@ public class Computer implements IComputer {
 	}
 
 	public UnsignedByte getMemory(UnsignedByte offset) {
-		return memory[offset.toBcdNumber()];
+		return memory[offset.bcdGet()];
 	}
 
 
@@ -95,6 +95,7 @@ public class Computer implements IComputer {
 	public void run(IContext context) {
 		reset();
 		while(continueRunning) {
+			UnsignedByte programCounter = getProgramCounter();
 			UnsignedByte opcode = advanceProgramCounter();
 			IOperation operation = opcodes.get(opcode);
 			if (operation == null) {
@@ -103,13 +104,6 @@ public class Computer implements IComputer {
 			operation.execute(this, context);
 		}
 	}
-
-	/**
-	 * Hack, work-around for debuggers to step in.
-	 */
-	protected void postOp() {
-		// No-op
-  }
 
 	public void setProgram(UnsignedByte... unsignedBytes) {
 		for (int i = 0; i < unsignedBytes.length; i++) {

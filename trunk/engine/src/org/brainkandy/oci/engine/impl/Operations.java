@@ -121,7 +121,7 @@ class Operations {
 				    .getRegister(i));
 				context.getOutput().put(value);
 				registerBValue = registerBValue.bcdIncrement();
-				if (registerBValue.toBcdNumber() >= 11) {
+				if (registerBValue.bcdGet() >= 11) {
 					registerBValue = UnsignedByte.ZERO;
 				}
 
@@ -202,7 +202,7 @@ class Operations {
 		return new IOperation() {
 			public void execute(IComputer computer, IContext context) {
 				UnsignedByte register = computer.getRegister(i);
-				UnsignedByte accum = computer.getRegister(i);
+				UnsignedByte accum = computer.getAccumulator();
 				UnsignedByte programCounter = computer.advanceProgramCounter();
 				if (register.toInteger() != accum.toInteger()) {
 					computer.setProgramCounter(programCounter);
@@ -215,7 +215,7 @@ class Operations {
 		return new IOperation() {
 			public void execute(IComputer computer, IContext context) {
 				UnsignedByte register = computer.getRegister(i);
-				UnsignedByte accum = computer.getRegister(i);
+				UnsignedByte accum = computer.getAccumulator();
 				UnsignedByte programCounter = computer.advanceProgramCounter();
 				if (register.toInteger() == accum.toInteger()) {
 					computer.setProgramCounter(programCounter);
@@ -228,7 +228,7 @@ class Operations {
 		return new IOperation() {
 			public void execute(IComputer computer, IContext context) {
 				UnsignedByte register = computer.getRegister(i);
-				UnsignedByte accum = computer.getRegister(i);
+				UnsignedByte accum = computer.getAccumulator();
 				UnsignedByte programCounter = computer.advanceProgramCounter();
 				if (register.toInteger() > accum.toInteger()) {
 					computer.setProgramCounter(programCounter);
@@ -241,7 +241,7 @@ class Operations {
 		return new IOperation() {
 			public void execute(IComputer computer, IContext context) {
 				UnsignedByte register = computer.getRegister(i);
-				UnsignedByte accum = computer.getRegister(i);
+				UnsignedByte accum = computer.getAccumulator();
 				UnsignedByte programCounter = computer.advanceProgramCounter();
 				if (register.toInteger() < accum.toInteger()) {
 					computer.setProgramCounter(programCounter);

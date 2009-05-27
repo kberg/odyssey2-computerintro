@@ -31,7 +31,7 @@ public final class UnsignedByte {
 	 * TODO: deal with overflow.
 	 */
 	public UnsignedByte bcdAdd(UnsignedByte val) {
-		int bcdSum = toBcdNumber() + val.toBcdNumber();
+		int bcdSum = bcdGet() + val.bcdGet();
 		int sum = denormalize(bcdSum);
 		return UnsignedByte.get(sum);
 	}
@@ -40,7 +40,7 @@ public final class UnsignedByte {
 	 * Returns an UnsignedByte whose value is this - val.
 	 */
 	public UnsignedByte bcdSubtract(UnsignedByte val) {
-		int difference = denormalize(toBcdNumber() - val.toBcdNumber());
+		int difference = denormalize(bcdGet() - val.bcdGet());
 		return UnsignedByte.get(difference);
 	}
 
@@ -66,7 +66,7 @@ public final class UnsignedByte {
 		return value;
 	}
 
-	public int toBcdNumber() {
+	public int bcdGet() {
 		return ((first * 10) + second) % 100;
 	}
 
@@ -80,14 +80,6 @@ public final class UnsignedByte {
 
 	public UnsignedByte secondDigit() {
 		return get(second);
-	}
-
-	public String toHexString() {
-		String string = Integer.toString(value, 16);
-		if (string.length() == 1) {
-			string = "0" + string;
-		}
-		return string;
 	}
 
 	@Override
@@ -108,7 +100,11 @@ public final class UnsignedByte {
 
 	@Override
 	public String toString() {
-		return toHexString();
+		String string = Integer.toString(value, 16);
+		if (string.length() == 1) {
+			string = "0" + string;
+		}
+		return string;
 	}
 
 	public static UnsignedByte get(String string) {

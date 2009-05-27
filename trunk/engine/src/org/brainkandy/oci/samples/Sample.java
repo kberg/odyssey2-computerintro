@@ -45,12 +45,19 @@ public enum Sample implements IProgram {
 	Message("Message",
 	    "6090 610C 04 E0 AC 09 AC 6B00 6211 6300 91 0B 92 02 A2 2315 6B00",
 	    "09 3304 0B 1224",
+	    // First message
 	    "1D 12 0E 0E 17 00",
+	    // Second message
 	    "14 20 1F 12 0C 20 0C 0E 17 17 1F 00",
+	    // Third message
 	    "13 12 26 20 13 1F 20 25 0E 12 00",
+	    // Fourth message
 	    "2D 12 11 0C 1B 17 13 0C 07 08 00",
+	    // Fifth message
 	    "18 15 11 19 14 16 17 2D 19 0D 00",
+	    // Sixth message
 	    "23 17 26 12 0C 25 20 23 1F 00",
+	    // Indexes
 	    "30 36 48 59 70 81"),
   ;
 

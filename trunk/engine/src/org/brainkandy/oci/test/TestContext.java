@@ -30,7 +30,7 @@ public class TestContext implements IContext {
 
 	private final IOutput output = new IOutput() {
 		public void put(UnsignedByte datum) {
-			outputData[writePosition.toBcdNumber()] = datum;
+			outputData[writePosition.bcdGet()] = datum;
 		}
 
 		public void setPosition(UnsignedByte writePosition) {

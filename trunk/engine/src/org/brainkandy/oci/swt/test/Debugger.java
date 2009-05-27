@@ -99,7 +99,7 @@ public class Debugger extends Computer {
 	@Override
 	public void setAccumulator(UnsignedByte datum) {
 		super.setAccumulator(datum);
-		printString(8, 3, datum.toHexString());
+		printString(8, 3, datum.toString());
 	}
 
 	// @Override
@@ -111,7 +111,7 @@ public class Debugger extends Computer {
 	@Override
 	public void setProgramCounter(UnsignedByte programCounter) {
 		super.setProgramCounter(programCounter);
-		printString(8, 2, programCounter.toHexString());
+		printString(8, 2, programCounter.toString());
 	}
 
 	@Override
@@ -119,6 +119,6 @@ public class Debugger extends Computer {
 		super.setRegister(i, value);
 		int column = i <= 7 ? 28 : 34;
 		int row = i % 8;
-		printString(column, row, (value == null ? UnsignedByte.ZERO : value).toHexString());
+		printString(column, row, (value == null ? UnsignedByte.ZERO : value).toString());
 	}
 }

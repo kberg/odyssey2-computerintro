@@ -7,5 +7,8 @@
 	<classpathentry kind="lib" path="/Users/konigsberg/Desktop/versions/3.5m6/plugins/org.eclipse.swt.cocoa.macosx_3.5.0.v3536b.jar"/>
 	<classpathentry kind="lib" path="/Users/konigsberg/Desktop/versions/3.5m6/plugins/org.eclipse.swt_3.5.0.v3536b.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="lib" path="/Users/konigsberg/Desktop/versions/3.5m6/plugins/org.eclipse.core.expressions_3.4.100.v20090311-0800.jar"/>
+	<classpathentry kind="lib" path="/Users/konigsberg/Desktop/versions/3.5m6/plugins/org.eclipse.jface_3.5.0.I20090313-0100.jar"/>
+	<zclasspathentry kind="lib" path="/Users/konigsberg/Desktop/versions/3.5m6/plugins/org.eclipse.equinox.common_3.5.0.v20090310-1800.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
