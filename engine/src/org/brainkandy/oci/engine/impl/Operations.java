@@ -165,7 +165,7 @@ class Operations {
 			public void execute(IComputer computer, IContext context) {
 				UnsignedByte accumulatorDatum = computer.getAccumulator();
 				UnsignedByte registerDatum = computer.getRegister(i);
-				UnsignedByte value = accumulatorDatum.bcdSubtract(registerDatum);
+				UnsignedByte value = registerDatum.bcdSubtract(accumulatorDatum);
 				computer.setAccumulator(value);
 			}
 		};
