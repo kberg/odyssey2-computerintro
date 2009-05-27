@@ -54,7 +54,7 @@ public enum Sample implements IProgram {
 	    // Fourth message
 	    "2D 12 11 0C 1B 17 13 0C 07 08 00",
 	    // Fifth message
-	    "18 15 11 19 14 16 17 2D 19 0D 00",
+	    "18 15 12 19 14 16 17 2D 19 0D 00",
 	    // Sixth message
 	    "23 17 26 12 0C 25 20 23 1F 00",
 	    // Indexes
