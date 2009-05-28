@@ -7,18 +7,18 @@ import org.brainkandy.oci.engine.IOutput;
 
 public class DesktopContext implements IContext {
 
-	public IBuzzer getBuzzer() {
-		return new Buzzer();
+  public IBuzzer getBuzzer() {
+    return new Buzzer();
   }
 
-	public IInput getInput() {
-	  // TODO Auto-generated method stub
-	  return null;
+  public IInput getInput() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
-	public IOutput getOutput() {
-	  // TODO Auto-generated method stub
-	  return null;
+  public IOutput getOutput() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }
