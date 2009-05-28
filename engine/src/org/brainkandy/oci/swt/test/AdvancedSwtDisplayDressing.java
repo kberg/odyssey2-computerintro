@@ -27,7 +27,10 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -47,15 +50,70 @@ public class AdvancedSwtDisplayDressing {
 
   private IDebugger debugger;
 
-  public AdvancedSwtDisplayDressing(Shell shell, SwtDisplay swtDisplay) {
+  public AdvancedSwtDisplayDressing(Shell shell) {
     setMenu(shell);
     this.shell = shell;
-    this.swtDisplay = swtDisplay;
+    Composite comp = new Composite(shell, SWT.NONE);
+    GridLayout gridLayout = new GridLayout();
+    gridLayout.numColumns = 1;
+    comp.setLayout(gridLayout);
+    this.swtDisplay = new SwtDisplay(comp, 25, 40);
+    createButtonBar(comp);
+
     this.computer = new Computer();
     this.debugger = new Debugger(computer);
     this.debugView = new DebuggerView(shell, swtDisplay);
     this.context = createContext(shell, swtDisplay);
     computer.setListener(new ComputerListener());
+  }
+  SelectionAdapter STOP_COMPUTER = new SelectionAdapter() {
+    @Override
+    public void widgetSelected(SelectionEvent event) {
+      stopComputer();
+    }
+  };
+  private final SelectionAdapter START_COMPUTER = new SelectionAdapter() {
+    @Override
+    public void widgetSelected(SelectionEvent event) {
+      startComputer();
+    }
+  };
+  SelectionAdapter STEP_DEBUGGER = new SelectionAdapter() {
+    @Override
+    public void widgetSelected(SelectionEvent event) {
+      debugger.step();
+    }
+  };
+  SelectionAdapter PAUSE_DEBUGGER = new SelectionAdapter() {
+    @Override
+    public void widgetSelected(SelectionEvent event) {
+      debugger.pause();
+    }
+  };
+  SelectionAdapter BREAKPOINTS = new SelectionAdapter() {
+    @Override
+    public void widgetSelected(SelectionEvent event) {
+      setBreakpoints();
+    }
+  };
+
+  private void createButtonBar(Composite comp) {
+    Composite buttonBar = new Composite(comp, SWT.NONE);
+    buttonBar.setLayout(new RowLayout());
+
+    createButton(comp, "Start", START_COMPUTER);
+    createButton(comp, "Stop", STOP_COMPUTER);
+    createButton(comp, "Step", STEP_DEBUGGER);
+    createButton(comp, "Pause", PAUSE_DEBUGGER);
+    createButton(comp, "Breakpoints", BREAKPOINTS);
+  }
+
+
+  private void createButton(Composite comp, String string,
+      SelectionListener selectionListener) {
+    Button button = new Button(comp, SWT.PUSH);
+    button.setText(string);
+    button.addSelectionListener(selectionListener);
   }
 
   private Menu createMenu(Shell shell, Menu menuBar, String text) {
@@ -110,36 +168,12 @@ public class AdvancedSwtDisplayDressing {
         enterProgram();
       }
     });
-    createMenuItem(computerMenu, "&Start", new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent event) {
-        startComputer();
-      }
-    });
-    createMenuItem(computerMenu, "&Stop", new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent event) {
-        stopComputer();
-      }
-    });
-    createMenuItem(computerMenu, "&Step", new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent event) {
-        debugger.step();
-      }
-    });
-    createMenuItem(computerMenu, "&Pause", new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent event) {
-        debugger.pause();
-      }
-    });
-    createMenuItem(computerMenu, "Breakpoints", new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent event) {
-        setBreakpoints();
-      }
-    });
+    createMenuItem(computerMenu, "&Start", START_COMPUTER);
+    createMenuItem(computerMenu, "&Stop", STOP_COMPUTER);
+    createMenuItem(computerMenu, "&Step", STEP_DEBUGGER);
+    createMenuItem(computerMenu, "&Pause", PAUSE_DEBUGGER);
+    createMenuItem(computerMenu, "Breakpoints", BREAKPOINTS);
+
     Menu samplesMenu = createMenu(shell, menuBar, "&Samples");
     for (Sample sample : Sample.values()) {
       createSample(samplesMenu, sample.getName(), sample.getSource());
